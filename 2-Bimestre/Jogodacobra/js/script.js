@@ -1,198 +1,240 @@
-const canvas = document.querySelector("canvas")
-const ctx = canvas.getContext("2d")
+const canvas = document.querySelector("canvas");
+const ctx = canvas.getContext("2d");
 
-const score = document.querySelector(".score--value")
-const finalScore = document.querySelector(".final-score > span")
-const menu = document.querySelector(".menu-screen")
-const buttonPlay = document.querySelector(".btn-play")
+const score = document.querySelector(".score--value");
+const finalScore = document.querySelector(".final-score span");
+const winnerText = document.querySelector(".winner");
 
-const audio = new Audio("../assets/audio.mp3")
+const menu = document.querySelector(".menu-screen");
+const buttonPlay = document.querySelector(".btn-play");
 
-const size = 30
+const size = 30;
 
-const initialPosition = { x: 270, y: 240 }
+/*PLAYERS*/
 
-let snake = [initialPosition]
+let snake1 = [{ x: 120, y: 120 }];
+let snake2 = [{ x: 450, y: 450 }];
 
-const incrementScore = () => {
-    score.innerText = +score.innerText + 10
-}
+let direction1 = "right";
+let direction2 = "left";
 
-const randomNumber = (min, max) => {
-    return Math.round(Math.random() * (max - min) + min)
-}
+let ghostsEaten = 0;
+let gameRunning = true;
 
-const randomPosition = () => {
-    const number = randomNumber(0, canvas.width - size)
-    return Math.round(number / 30) * 30
-}
-
-const randomColor = () => {
-    const red = randomNumber(0, 255)
-    const green = randomNumber(0, 255)
-    const blue = randomNumber(0, 255)
-
-    return `rgb(${red}, ${green}, ${blue})`
-}
+/* FANTASMA*/
 
 const food = {
     x: randomPosition(),
-    y: randomPosition(),
-    color: randomColor()
+    y: randomPosition()
+};
+
+function randomNumber(min, max) {
+    return Math.floor(Math.random() * (max - min) + min);
 }
 
-let direction, loopId
-
-const drawFood = () => {
-    const { x, y, color } = food
-
-    ctx.shadowColor = color
-    ctx.shadowBlur = 6
-    ctx.fillStyle = color
-    ctx.fillRect(x, y, size, size)
-    ctx.shadowBlur = 0
+function randomPosition() {
+    const pos = randomNumber(0, canvas.width - size);
+    return Math.round(pos / size) * size;
 }
 
-const drawSnake = () => {
-    ctx.fillStyle = "#ddd"
+function drawGhost() {
+    ctx.font = "28px Arial";
+    ctx.fillText("👻", food.x, food.y + 25);
+}
 
-    snake.forEach((position, index) => {
-        if (index == snake.length - 1) {
-            ctx.fillStyle = "white"
+/* DESENHAR COBRAS*/
+
+function drawSnake(snake, color) {
+
+    snake.forEach((segment, index) => {
+
+        ctx.fillStyle = color;
+        ctx.fillRect(segment.x, segment.y, size, size);
+
+        // cabeça com olhos
+        if (index === snake.length - 1) {
+
+            ctx.fillStyle = "white";
+
+            ctx.beginPath();
+            ctx.arc(segment.x + 8, segment.y + 10, 3, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.arc(segment.x + 22, segment.y + 10, 3, 0, Math.PI * 2);
+            ctx.fill();
         }
-
-        ctx.fillRect(position.x, position.y, size, size)
-    })
+    });
 }
 
-const moveSnake = () => {
-    if (!direction) return
+/* MOVIMENTO (SEM MORRER NA PAREDE)*/
 
-    const head = snake[snake.length - 1]
+function moveSnake(snake, direction) {
 
-    if (direction == "right") {
-        snake.push({ x: head.x + size, y: head.y })
-    }
+    const head = snake[snake.length - 1];
 
-    if (direction == "left") {
-        snake.push({ x: head.x - size, y: head.y })
-    }
+    let newHead = {
+        x: head.x,
+        y: head.y
+    };
 
-    if (direction == "down") {
-        snake.push({ x: head.x, y: head.y + size })
-    }
+    if (direction === "right") newHead.x += size;
+    if (direction === "left") newHead.x -= size;
+    if (direction === "up") newHead.y -= size;
+    if (direction === "down") newHead.y += size;
 
-    if (direction == "up") {
-        snake.push({ x: head.x, y: head.y - size })
-    }
+    // 🔁 TELEPORTA NAS BORDAS
+    if (newHead.x >= canvas.width) newHead.x = 0;
+    if (newHead.x < 0) newHead.x = canvas.width - size;
 
-    snake.shift()
+    if (newHead.y >= canvas.height) newHead.y = 0;
+    if (newHead.y < 0) newHead.y = canvas.height - size;
+
+    snake.push(newHead);
+    snake.shift();
 }
 
-const drawGrid = () => {
-    ctx.lineWidth = 1
-    ctx.strokeStyle = "#191919"
+/* COMER FANTASMA (PLAYER 2)*/
 
-    for (let i = 30; i < canvas.width; i += 30) {
-        ctx.beginPath()
-        ctx.lineTo(i, 0)
-        ctx.lineTo(i, 600)
-        ctx.stroke()
+function checkEat() {
 
-        ctx.beginPath()
-        ctx.lineTo(0, i)
-        ctx.lineTo(600, i)
-        ctx.stroke()
-    }
-}
+    const head = snake2[snake2.length - 1];
 
-const chackEat = () => {
-    const head = snake[snake.length - 1]
+    if (head.x === food.x && head.y === food.y) {
 
-    if (head.x == food.x && head.y == food.y) {
-        incrementScore()
-        snake.push(head)
-        audio.play()
+        ghostsEaten++;
+        score.innerText = ghostsEaten;
 
-        let x = randomPosition()
-        let y = randomPosition()
+        snake2.push({ ...head });
 
-        while (snake.find((position) => position.x == x && position.y == y)) {
-            x = randomPosition()
-            y = randomPosition()
+        food.x = randomPosition();
+        food.y = randomPosition();
+
+        if (ghostsEaten >= 10) {
+            win("🔴 Player 2");
         }
-
-        food.x = x
-        food.y = y
-        food.color = randomColor()
     }
 }
 
-const checkCollision = () => {
-    const head = snake[snake.length - 1]
-    const canvasLimit = canvas.width - size
-    const neckIndex = snake.length - 2
+// =====================
+// PLAYER 1 GANHA (ENCOSTA NO PLAYER 2)
+// =====================
 
-    const wallCollision =
-        head.x < 0 || head.x > canvasLimit || head.y < 0 || head.y > canvasLimit
+function checkPlayer1Win() {
 
-    const selfCollision = snake.find((position, index) => {
-        return index < neckIndex && position.x == head.x && position.y == head.y
-    })
+    const head1 = snake1[snake1.length - 1];
 
-    if (wallCollision || selfCollision) {
-        gameOver()
+    const hit = snake2.find((segment, index) => {
+        return index < snake2.length - 1 &&
+            segment.x === head1.x &&
+            segment.y === head1.y;
+    });
+
+    if (hit) {
+        win("🟢 Player 1");
     }
 }
 
-const gameOver = () => {
-    direction = undefined
+// =====================
+// DESENHAR GRADE
+// =====================
 
-    menu.style.display = "flex"
-    finalScore.innerText = score.innerText
-    canvas.style.filter = "blur(2px)"
+function drawGrid() {
+
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = "#222";
+
+    for (let i = 0; i < canvas.width; i += size) {
+
+        ctx.beginPath();
+        ctx.moveTo(i, 0);
+        ctx.lineTo(i, canvas.height);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(0, i);
+        ctx.lineTo(canvas.width, i);
+        ctx.stroke();
+    }
 }
 
-const gameLoop = () => {
-    clearInterval(loopId)
+// =====================
+// VITÓRIA
+// =====================
 
-    ctx.clearRect(0, 0, 600, 600)
-    drawGrid()
-    drawFood()
-    moveSnake()
-    drawSnake()
-    chackEat()
-    checkCollision()
+function win(winner) {
 
-    loopId = setTimeout(() => {
-        gameLoop()
-    }, 300)
+    gameRunning = false;
+
+    winnerText.innerText = "Vencedor: " + winner;
+    finalScore.innerText = ghostsEaten;
+
+    menu.style.display = "flex";
+    canvas.style.filter = "blur(3px)";
 }
 
-gameLoop()
+/* LOOP DO JOGO*/
+
+function gameLoop() {
+
+    if (!gameRunning) return;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    drawGrid();
+    drawGhost();
+
+    moveSnake(snake1, direction1);
+    moveSnake(snake2, direction2);
+
+    drawSnake(snake1, "#00ff66");
+    drawSnake(snake2, "#ff3333");
+
+    checkEat();
+    checkPlayer1Win();
+
+    setTimeout(gameLoop, 180);
+}
+
+gameLoop(); 
+
+/* CONTROLES*/
 
 document.addEventListener("keydown", ({ key }) => {
-    if (key == "ArrowRight" && direction != "left") {
-        direction = "right"
-    }
 
-    if (key == "ArrowLeft" && direction != "right") {
-        direction = "left"
-    }
+    // PLAYER 1
+    if (key === "ArrowRight" && direction1 !== "left") direction1 = "right";
+    if (key === "ArrowLeft" && direction1 !== "right") direction1 = "left";
+    if (key === "ArrowUp" && direction1 !== "down") direction1 = "up";
+    if (key === "ArrowDown" && direction1 !== "up") direction1 = "down";
 
-    if (key == "ArrowDown" && direction != "up") {
-        direction = "down"
-    }
+    // PLAYER 2 (WASD)
+    if (key === "d" && direction2 !== "left") direction2 = "right";
+    if (key === "a" && direction2 !== "right") direction2 = "left";
+    if (key === "w" && direction2 !== "down") direction2 = "up";
+    if (key === "s" && direction2 !== "up") direction2 = "down";
+});
 
-    if (key == "ArrowUp" && direction != "down") {
-        direction = "up"
-    }
-})
+// =====================
+// REINICIAR
+// =====================
 
 buttonPlay.addEventListener("click", () => {
-    score.innerText = "00"
-    menu.style.display = "none"
-    canvas.style.filter = "none"
 
-    snake = [initialPosition]
-})
+    snake1 = [{ x: 120, y: 120 }];
+    snake2 = [{ x: 450, y: 450 }];
+
+    direction1 = "right";
+    direction2 = "left";
+
+    ghostsEaten = 0;
+
+    score.innerText = "0";
+
+    gameRunning = true;
+
+    menu.style.display = "none";
+    canvas.style.filter = "none";
+
+    gameLoop();
+});

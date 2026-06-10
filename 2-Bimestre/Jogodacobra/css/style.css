@@ -1,73 +1,158 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap");
 
-* {
+*{
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: "Poppings", sans-serif;
+    font-family: "Poppins", sans-serif;
 }
-/*Cor do fundo e do texto*/
-body {
-    background-color: black;
+
+/* Fundo da página */
+body{
+    background-color: #000;
+    color: rgba(255,255,255,0.8);
+
     display: flex;
-    min-height: 100vh;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    flex-direction: column;
-    color: rgba(255, 255, 255, 0.637);
+
+    min-height: 100vh;
 }
 
-/*cor dentro do quadro*/
-canvas {
-    background-color: #4e4d49a1;
+/* Canvas */
+canvas{
+    background-color: rgba(78,77,73,0.65);
+    border: 2px solid #333;
 }
 
-.score {
+/* Área do placar */
+.score{
     display: flex;
     flex-direction: column;
     align-items: center;
-    font-size: 1.8rem;
+
+    margin-bottom: 15px;
+
+    text-align: center;
 }
 
-.score--value {
-    font-weight: 700;
-    /*tamanho da score*/
-    font-size: 4.5rem;
+/* Número de fantasmas */
+.score--value{
     display: block;
-    /*tamanho do quadrado*/
-    margin-top: -10px;
+
+    font-size: 4rem;
+    font-weight: 700;
+
+    color: white;
 }
 
-.menu-screen {
+/* Objetivos dos jogadores */
+.objetivos{
+    margin-top: 10px;
+
+    font-size: 1rem;
+    font-weight: 500;
+
+    color: #ccc;
+
+    line-height: 1.5;
+}
+
+/* Tela de Game Over */
+.menu-screen{
     position: absolute;
+
     display: none;
     flex-direction: column;
     align-items: center;
-    z-index: 1;
+    justify-content: center;
+
+    gap: 10px;
+
+    z-index: 10;
+
+    background-color: rgba(0,0,0,0.8);
+
+    padding: 30px;
+    border-radius: 15px;
 }
 
-.game-over {
-    text-transform: uppercase;
-    font-weight: 700;
+/* Texto Game Over */
+.game-over{
     font-size: 3rem;
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    color: white;
 }
 
-.final-score {
-    font-weight: 500;
+/* Nome do vencedor */
+.winner{
     font-size: 1.5rem;
+    font-weight: 600;
+
+    color: gold;
 }
 
-.btn-play {
+/* Pontuação final */
+.final-score{
+    font-size: 1.2rem;
+    font-weight: 500;
+
+    color: white;
+}
+
+/* Botão */
+.btn-play{
+    margin-top: 15px;
+
     border: none;
     border-radius: 100px;
-    padding: 10px 15px 10px 12px;
-    font-size: 1rem;
-    font-weight: 600;
-    color: #333;
-    margin-top: 40px;
+
+    padding: 12px 20px;
+
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 5px;
+    gap: 6px;
+
     cursor: pointer;
+
+    font-size: 1rem;
+    font-weight: 600;
+
+    background-color: white;
+    color: #222;
+
+    transition: 0.3s;
+}
+
+.btn-play:hover{
+    transform: scale(1.05);
+}
+
+/* Ícone do botão */
+.material-symbols-outlined{
+    font-size: 28px;
+}
+
+/* Responsividade */
+@media(max-width: 700px){
+
+    canvas{
+        width: 95vw;
+        height: 95vw;
+        max-width: 600px;
+        max-height: 600px;
+    }
+
+    .score--value{
+        font-size: 3rem;
+    }
+
+    .game-over{
+        font-size: 2rem;
+    }
 }
