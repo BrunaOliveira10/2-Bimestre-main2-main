@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Variáveis</title>
+</head>
+<body>
+    <form action="">
+        <label>Número 1:</label>
+        <input type="number" id="num1"> <br>
+        <label>Número 2:</label>
+        <input type="number" id="num2">
+    </form>
+    <button onclick="calcular()">Calcular</button>
+    <p id="resultado"></p>
+</body>
+<script>
+
+    function calcular(){
+        var num1 = Number(document.getElementById("num1").value);
+        var num2 = Number(document.getElementById("num2").value);
+
+        document.getElementById("resultado").innerHTML = num1 * num2;
+    }
+
+</script>
+</html>

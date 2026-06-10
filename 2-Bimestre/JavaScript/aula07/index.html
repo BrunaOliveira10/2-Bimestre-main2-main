@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laços</title>
+</head>
+<body>
+    <h3>For</h3>
+    <p id="for"></p>
+
+    <h3>while</h3>
+    <p id="while"></p>
+</body>
+<script>
+    //Laço for
+    let text = "";
+    for(let cont=1; cont<=200; cont++){
+        text = text + cont + "<br>";
+    }
+    document.getElementById("for").innerHTML = text;
+
+    //Laço While
+    let i = 1;
+    let res ="";
+
+    while(i <= 200){
+        res = res + i+ "<br>"
+        i++;
+    }
+    document.getElementById("while").innerHTML = res;
+</script>
+</html>

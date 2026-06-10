@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Exercício de Laços</title>
+</head>
+<body>
+
+    <h2>While (1 a 200)</h2>
+    <p id="while"></p>
+
+    <h2>For (1 a 200)</h2>
+    <p id="for"></p>
+
+    <h2>Tabuada</h2>
+    <label>Digite um número (1 a 10):</label>
+    <input type="number" id="numero">
+    <button onclick="tabuada()">Calcular</button>
+    <p id="tab"></p>
+
+<script>
+    // WHILE de 1 a 200
+    let contador = 1;
+    let textoWhile = "";
+
+    while(contador <= 200){
+        textoWhile += contador + "<br>";
+        contador++;
+    }
+
+    document.getElementById("while").innerHTML = textoWhile;
+
+    // FOR de 1 a 200
+    let textoFor = "";
+
+    for(let i = 1; i <= 200; i++){
+        textoFor += i + "<br>";
+    }
+
+    document.getElementById("for").innerHTML = textoFor;
+
+    // TABUADA
+    function tabuada(){
+        let num = Number(document.getElementById("numero").value);
+        let res = "";
+        let resultado = document.getElementById("tab");
+
+        if(num < 1 || num > 10){
+            resultado.innerHTML = "Digite um número entre 1 e 10!";
+            return;
+        }
+
+        for(let i = 0; i <= 10; i++){
+            res += num + " x " + i + " = " + (num * i) + "<br>";
+        }
+
+        resultado.innerHTML = res;
+    }
+</script>
+
+</body>
+</html>

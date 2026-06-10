@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula03</title>
+</head>
+<body>
+    <form>
+        <label>Número 1:</label>
+        <input type="number" id="num1"><br>
+        <label>Número 2:</label>
+        <input type="number" id="num2"><br>
+    </form>
+    <button onclick="verificar()">verificar</button>
+    <p id="resultado"></p>
+</body>
+<script>
+    function verificar(){
+        let num1 = Number(document.getElementById("num1").value);
+        let num2 = Number(document.getElementById("num2").value);
+
+        if(num1 > num2){
+            resultado.innerHTML = "O maior é: "+num1;
+        }
+        else if(num2 > num1){
+            resultado.innerHTML = "O maior é: "+num2;
+        }
+        else{
+            resultado.innerHTML = "Os Números são iguais (: ";
+        }
+    }
+</script>
+</html>
